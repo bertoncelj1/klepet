@@ -13,6 +13,12 @@ a {
   margin-right: auto;
 }
 
+.message-video{
+  margin-left: 20px;
+  width: 200px;
+  height: 150px;
+} 
+
 #kanal {
   background-color: #FFFF99;
   margin-bottom: 1em;

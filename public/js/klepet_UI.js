@@ -3,6 +3,8 @@ function divElementEnostavniTekst(sporocilo) {
   if (jeSmesko) {
     sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
+  } else if(isYoutubeUrl(sporocilo)){
+    return divElementYoutube(sporocilo);
   } else {
     return $('<div style="font-weight: bold;"></div>').text(sporocilo);
   }
@@ -11,6 +13,26 @@ function divElementEnostavniTekst(sporocilo) {
 function divElementHtmlTekst(sporocilo) {
   return $('<div></div>').html('<i>' + sporocilo + '</i>');
 }
+
+var youtubeReg = /https?:\/\/www\.youtube\.com\/watch\?v=.*?(?:\s|$)/gi;
+
+function divElementYoutube(message) {
+ 	var videos = "";
+ 	var videoURLs = message.match(youtubeReg)
+
+ 	for (var i = 0; i < videoURLs.length; i++) {
+ 	    var videoSRC = videoURLs[i].replace("/watch?v=","/embed/");
+ 			videos += '<iframe  class="message-video" src="' + videoSRC + '" allowfullscreen />';
+ 	}
+ 	
+  return $('<div></div>').html(videos);
+}
+
+function isYoutubeUrl(message){
+  var videos = message.match(youtubeReg);
+  return videos != null && videos.length > 0;
+}
+
 
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
