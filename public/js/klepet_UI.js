@@ -7,11 +7,13 @@ function divElementEnostavniTekst(sporocilo) {
 
   } else if(isImageUrl(sporocilo) == true){
     return divElementImage(sporocilo);
-    
+
+  } else if(isYoutubeUrl(sporocilo)){
+    return divElementYoutube(sporocilo);
   } else {
     return $('<div style="font-weight: bold;"></div>').text(sporocilo);
   }
-  
+
 }
 
 function divElementHtmlTekst(sporocilo) {
@@ -36,6 +38,26 @@ function isImageUrl(message){
   return images != null && images.length > 0;
 }
 
+var youtubeReg = /https?:\/\/www\.youtube\.com\/watch\?v=.*?(?:\s|$)/gi;
+
+function divElementYoutube(message) {
+ 	var videos = "";
+ 	var videoURLs = message.match(youtubeReg)
+
+ 	for (var i = 0; i < videoURLs.length; i++) {
+ 	    var videoSRC = videoURLs[i].replace("/watch?v=","/embed/");
+ 			videos += '<iframe  class="message-video" src="' + videoSRC + '" allowfullscreen />';
+ 	}
+
+  return $('<div></div>').html(videos);
+}
+
+function isYoutubeUrl(message){
+  var videos = message.match(youtubeReg);
+  return videos != null && videos.length > 0;
+}
+
+
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
   sporocilo = dodajSmeske(sporocilo);
@@ -49,7 +71,7 @@ function procesirajVnosUporabnika(klepetApp, socket) {
   } else {
     sporocilo = filtirirajVulgarneBesede(sporocilo);
     klepetApp.posljiSporocilo(trenutniKanal, sporocilo);
-    
+
     $('#sporocila').append(divElementEnostavniTekst(sporocilo));
     $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
   }
@@ -102,7 +124,7 @@ $(document).ready(function() {
     var novElement = divElementEnostavniTekst(sporocilo.besedilo);
     $('#sporocila').append(novElement);
   });
-  
+
   socket.on('kanali', function(kanali) {
     $('#seznam-kanalov').empty();
 
@@ -125,15 +147,15 @@ $(document).ready(function() {
     for (var i=0; i < uporabniki.length; i++) {
       $('#seznam-uporabnikov').append(divElementEnostavniTekst(uporabniki[i]));
     }
-    
-    
+
+
     $('#seznam-uporabnikov div').click(function() {
       $('#poslji-sporocilo').val('/zasebno "' + $(this).text() + '" ');
       $('#poslji-sporocilo').focus();
     });
-  
+
   });
-  
+
 
 
   setInterval(function() {
@@ -147,8 +169,8 @@ $(document).ready(function() {
     procesirajVnosUporabnika(klepetApp, socket);
     return false;
   });
-  
-  
+
+
 });
 
 function dodajSmeske(vhodnoBesedilo) {
