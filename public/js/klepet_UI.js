@@ -155,6 +155,12 @@ $(document).ready(function() {
     });
 
   });
+  
+  socket.on('dregljaj', function () {
+      $('#vsebina').jrumble();
+      $('#vsebina').trigger('startRumble');
+      setInterval(function(){  $('#vsebina').trigger('stopRumble'); }, 1500);
+  });
 
 
 
